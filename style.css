@@ -1,0 +1,12 @@
+p {
+  text-align: center; 
+}
+
+body {
+  text-align: center;
+}
+
+svg {
+  display: block;
+  margin: auto;
+}
