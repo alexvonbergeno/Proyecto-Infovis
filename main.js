@@ -47,6 +47,10 @@ const color = d3.scaleLog()
 
 } 
 
+
+
+
+
 function parseFunction(d) {
   const data = {
     Rank: +d.Rank,
