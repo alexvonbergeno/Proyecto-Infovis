@@ -1,7 +1,7 @@
 // Definimos ctes de visualización
 
-const WIDTH = 1000;
-const HEIGHT = 700;
+const WIDTH = 1800;
+const HEIGHT = 900;
 const margin = {
   top: 20,
   right: 50,
@@ -26,24 +26,38 @@ const mapcontainer = svg
   .attr('id', 'mapcontainer')
   .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
+
+// Creamos el contenedor para el mapa
 function crearMapa(mapdata, populationdata) {
   // console.log(mapdata);
   console.log(populationdata);
 
   // Definir proyección a utilizar
-const projection = d3.geoMercator()
-.fitSize([width, height], mapdata);
+  const projection = d3.geoNaturalEarth1()
+    .fitSize([width, height], mapdata);
 
 
-// Utilizamos multipolígonos para dibujar los países
-const path = d3.geoPath()
-.projection(projection);
+  // Utilizamos multipolígonos para dibujar los países
+  const path = d3.geoPath()
+    .projection(projection);
 
 
-// Definimos la escala logaritmica para el color
-const color = d3.scaleLog()
-.domain(d3.extent(populationdata, d => d.population))
-.range(["#f7fbff", "#08306b"]);
+  // Definimos la escala logaritmica para el color
+  const color = d3.scaleLog()
+    .domain(d3.extent(populationdata, d => d.population))
+    .range(["#f7fbff", "#08306b"]);
+
+  
+
+  // Dibujamos los países
+  mapcontainer
+    .selectAll('path')
+    .data(mapdata.features)
+    .join('path')
+    .attr('d', path)
+    .attr('fill', 'lightgray')
+
+
 
 } 
 
