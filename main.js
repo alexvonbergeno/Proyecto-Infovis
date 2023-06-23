@@ -39,16 +39,24 @@ const heatcircules = svg
 //
 
 
-
+var projection;
+var populationdat;
+var datos;
+var zoom = d3.zoom()
+  .scaleExtent([1, 8])
+  .on('zoom', zoomed);
+var escalacirculos;
+var escalacolor;
 
 
 // Creamos el contenedor para el mapa
 function crearMapa(mapdata, populationdata, year) {
+  populationdat = populationdata
   // console.log(mapdata);
-  console.log(populationdata);
+  // console.log(populationdata);
 
   // Definir proyección a utilizar
-  const projection = d3.geoNaturalEarth1()
+  projection = d3.geoNaturalEarth1()
     .fitSize([width, height], mapdata);
 
 
@@ -60,17 +68,15 @@ function crearMapa(mapdata, populationdata, year) {
 
 // ### REVISAR QUE ESCALA ELEGIR ###
   // Definimos la escala logaritmica para el color
-  const escalacolor = d3.scaleLog()
+  escalacolor = d3.scaleLog()
     .domain(d3.extent(populationdata, d => d.Population[year]))
     .range(["#F3FF00", "#FF0000"]);
 
   // ### REVISA ESTA PARTE ###
-  const escalacirculos = d3.scaleLog()
+  escalacirculos = d3.scaleLog()
     .domain(d3.extent(populationdata, d => d.Population[year]))
     .range([1, 20]);
 //
-
-console.log(populationdata[1].Population[year])
 
 
 
@@ -94,7 +100,7 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
 
   heatcircules
     .selectAll('circle')
-    .data(populationdata)
+    .data(populationdata, d => d.Population[year])
     .join(
       enter => {
         const circle = enter.append('circle')
@@ -110,12 +116,37 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
           .attr('stroke-width', 0.5)
         
         return circle
+      },
+      update => update,
+      exit => {
+        exit
+          .transition()
+          .duration(1000)
+          .attr('r', 0)
+          .attr('opacity', 0)
+          .remove()
       }
     )
 
 
 }
 
+
+function zoomed(event) {
+  // console.log(event.transform);
+  mapcontainer.attr("transform", event.transform);
+  heatcircules.attr("transform", event.transform);
+}
+
+function prueba() {
+  console.log('prueba');
+  console.log(projection)
+  console.log(escalacirculos)
+  console.log(escalacolor)
+  console.log(populationdat)
+
+  generarcirculocalor(populationdat, projection, 1980, escalacirculos, escalacolor)
+}
 
 
 
@@ -146,6 +177,61 @@ function parseFunction(d) {
   }
   return data
 }
+var audio;
+audio = new Audio('cancion.mp3');
+
+function reproducirCancion() {
+  audio.play();
+  activo = true;
+}
+
+function pausarCancion() {
+  if (audio) {
+    audio.pause();
+    activo = false;
+  }
+}
+
+function detenerCancion() {
+  if (audio) {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+}
+
+
+
+// Definimos una variable para controlar si el hilo está activo
+let activo = false;
+
+// Lista de años para seleccionar al azar
+const anos = [2022, 2020, 2015, 2010, 2000, 1990, 1980, 1970];
+
+// Definimos la función que se ejecutará cada 1.5 segundos
+function actualizar() {
+  if (!activo) {
+    return;
+  }
+
+  // Seleccionamos un año al azar de la lista
+  const ano = anos[Math.floor(Math.random() * anos.length)];
+
+  console.log(ano);
+  // Actualizamos el svg generado con la función generarcirculocalor
+  // generarcirculocalor(populationdat, projection, ano, escalacirculos, escalacolor);
+}
+
+// Iniciamos el hilo
+const intervalId = setInterval(actualizar, 1000);
+
+// Si quieres detener el hilo en algún momento, puedes usar
+// clearInterval(intervalId);
+
+
+
+
+
+
 
 const year = 2022
 
