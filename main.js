@@ -12,6 +12,9 @@ const margin = {
 const width = WIDTH - margin.left - margin.right;
 const height = HEIGHT - margin.top - margin.bottom;
 
+
+
+
 // Creamos el svg
 const svg = d3
   .select("#vis")
@@ -27,10 +30,22 @@ const mapcontainer = svg
   .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
 
+const heatcircules = svg
+  .append('g')
+  .attr('id', 'heatcircules')
+  .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+
+//
+
+
+
+
+
 // Creamos el contenedor para el mapa
 function crearMapa(mapdata, populationdata) {
-  // console.log(mapdata);
-  console.log(populationdata);
+  console.log(mapdata);
+  // console.log(populationdata);
 
   // Definir proyección a utilizar
   const projection = d3.geoNaturalEarth1()
@@ -42,12 +57,20 @@ function crearMapa(mapdata, populationdata) {
     .projection(projection);
 
 
+
+// ### REVISAR QUE ESCALA ELEGIR ###
   // Definimos la escala logaritmica para el color
   const color = d3.scaleLog()
     .domain(d3.extent(populationdata, d => d.population))
     .range(["#f7fbff", "#08306b"]);
 
-  
+  // ### REVISA ESTA PARTE ###
+  const escalacirculos = d3.scaleLog()
+    .domain(d3.extent(populationdata, d => d.population))
+    .range([1, 20]);
+//
+
+
 
   // Dibujamos los países
   mapcontainer
@@ -57,10 +80,38 @@ function crearMapa(mapdata, populationdata) {
     .attr('d', path)
     .attr('fill', 'lightgray')
 
-
-
 } 
 
+
+
+
+function generarcirculocalor(populationdata, year, projection) {
+  // Definimos la escala logaritmica para el color
+  const color = d3.scaleLog()
+    .domain(d3.extent(populationdata, d => d.population))
+    .range(["#f7fbff", "#08306b"]);
+
+  heatcircules
+    .selectAll('circle')
+    .data(populationdata)
+    .join(
+      enter => {
+        const circle = enter.append('circle')
+
+        // Lo fijamos en la coordenada correspondiente
+        circle
+          .attr('cx', d => projection([d.longitude, d.latitude])[0])
+          .attr('cy', d => projection([d.longitude, d.latitude])[1])
+          .attr('r', d => d.population)
+          .attr('fill', d => color(d.population))
+          .attr('opacity', 0.5)
+          .attr('stroke', 'black')
+          .attr('stroke-width', 0.5)
+      }
+    )
+
+
+}
 
 
 
@@ -86,6 +137,8 @@ function parseFunction(d) {
     Density: +d.Density,
     Growth: +d.Growth,
     WorldPercentage: +d.WPPercentage,
+    Latitude: +d.Latitude,
+    Longitude: +d.Longitude,
   }
   return data
 }
