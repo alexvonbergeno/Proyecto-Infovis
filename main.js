@@ -97,6 +97,7 @@ function crearMapa(mapdata, populationdata, year) {
 
 function generarcirculocalor(populationdata, projection, year, escalacirculos, escalacolor) {
 
+  console.log(year)
 
   heatcircules
     .selectAll('circle')
@@ -104,11 +105,13 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
     .join(
       enter => {
         const circle = enter.append('circle')
+        console.log('enter')
 
         // Lo fijamos en la coordenada correspondiente
         circle
           .attr('cx', d => projection([d.Longitude, d.Latitude])[0])
           .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
+          .attr('class', 'heatcircle')
           .attr('r', d =>  escalacirculos(d.Population[year]))
           .attr('fill', d => escalacolor(d.Population[year]))
           .attr('opacity', 1)
@@ -117,8 +120,20 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
         
         return circle
       },
-      update => update,
+      update => {
+        // En la fase de actualización, cambiamos los atributos de los círculos existentes
+        update
+          .transition()
+          .duration(1000)
+          .attr('cx', d => projection([d.Longitude, d.Latitude])[0])
+          .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
+          .attr('r', d =>  escalacirculos(d.Population[year]))
+          .attr('fill', d => escalacolor(d.Population[year]));
+        
+          return update
+      },
       exit => {
+        console.log('exit')
         exit
           .transition()
           .duration(1000)
@@ -216,9 +231,9 @@ function actualizar() {
   // Seleccionamos un año al azar de la lista
   const ano = anos[Math.floor(Math.random() * anos.length)];
 
-  console.log(ano);
+  // console.log(ano);
   // Actualizamos el svg generado con la función generarcirculocalor
-  // generarcirculocalor(populationdat, projection, ano, escalacirculos, escalacolor);
+  generarcirculocalor(populationdat, projection, ano, escalacirculos, escalacolor);
 }
 
 // Iniciamos el hilo
