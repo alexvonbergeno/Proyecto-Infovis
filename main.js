@@ -1,7 +1,7 @@
 // Definimos ctes de visualización
 
-const WIDTH = 1000;
-const HEIGHT = 700;
+const WIDTH = 1800;
+const HEIGHT = 900;
 const margin = {
   top: 20,
   right: 50,
@@ -11,6 +11,9 @@ const margin = {
 
 const width = WIDTH - margin.left - margin.right;
 const height = HEIGHT - margin.top - margin.bottom;
+
+
+
 
 // Creamos el svg
 const svg = d3
@@ -26,29 +29,99 @@ const mapcontainer = svg
   .attr('id', 'mapcontainer')
   .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-function crearMapa(mapdata, populationdata) {
+
+const heatcircules = svg
+  .append('g')
+  .attr('id', 'heatcircules')
+  .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+
+//
+
+
+
+
+
+// Creamos el contenedor para el mapa
+function crearMapa(mapdata, populationdata, year) {
   // console.log(mapdata);
   console.log(populationdata);
 
   // Definir proyección a utilizar
-const projection = d3.geoMercator()
-.fitSize([width, height], mapdata);
+  const projection = d3.geoNaturalEarth1()
+    .fitSize([width, height], mapdata);
 
 
-// Utilizamos multipolígonos para dibujar los países
-const path = d3.geoPath()
-.projection(projection);
+  // Utilizamos multipolígonos para dibujar los países
+  const path = d3.geoPath()
+    .projection(projection);
 
 
-// Definimos la escala logaritmica para el color
-const color = d3.scaleLog()
-.domain(d3.extent(populationdata, d => d.population))
-.range(["#f7fbff", "#08306b"]);
+
+// ### REVISAR QUE ESCALA ELEGIR ###
+  // Definimos la escala logaritmica para el color
+  const escalacolor = d3.scaleLog()
+    .domain(d3.extent(populationdata, d => d.Population[year]))
+    .range(["#F3FF00", "#FF0000"]);
+
+  // ### REVISA ESTA PARTE ###
+  const escalacirculos = d3.scaleLog()
+    .domain(d3.extent(populationdata, d => d.Population[year]))
+    .range([1, 20]);
+//
+
+console.log(populationdata[1].Population[year])
+
+
+
+  // Dibujamos los países
+  mapcontainer
+    .selectAll('path')
+    .data(mapdata.features)
+    .join('path')
+    .attr('d', path)
+    .attr('fill', 'lightgray')
+
+    generarcirculocalor(populationdata, projection, year, escalacirculos, escalacolor)
 
 } 
 
+
+
+
+function generarcirculocalor(populationdata, projection, year, escalacirculos, escalacolor) {
+
+
+  heatcircules
+    .selectAll('circle')
+    .data(populationdata)
+    .join(
+      enter => {
+        const circle = enter.append('circle')
+
+        // Lo fijamos en la coordenada correspondiente
+        circle
+          .attr('cx', d => projection([d.Longitude, d.Latitude])[0])
+          .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
+          .attr('r', d =>  escalacirculos(d.Population[year]))
+          .attr('fill', d => escalacolor(d.Population[year]))
+          .attr('opacity', 1)
+          .attr('stroke', 'black')
+          .attr('stroke-width', 0.5)
+        
+        return circle
+      }
+    )
+
+
+}
+
+
+
+
 function parseFunction(d) {
   const data = {
+    ID: +d.ID,
     Rank: +d.Rank,
     CCA3: d.CCA3,
     Country: d.Country,
@@ -68,15 +141,17 @@ function parseFunction(d) {
     Density: +d.Density,
     Growth: +d.Growth,
     WorldPercentage: +d.WPPercentage,
+    Latitude: +d.Latitude,
+    Longitude: +d.Longitude,
   }
   return data
 }
 
-console.log("Cargando datos...")
+const year = 2022
 
 // Cargamos los datos
 d3.json("data/countries.geojson").then((datos) => {
     d3.csv("data/population.csv", parseFunction).then((populationdata) => {
-      crearMapa(datos, populationdata)
+      crearMapa(datos, populationdata, year)
     })
   })
