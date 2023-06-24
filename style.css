@@ -10,3 +10,29 @@ svg {
   display: block;
   margin: auto;
 }
+
+.country-line {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.line-title-text {
+  text-align: center;
+  text-anchor: middle;
+}
+
+.country-legend-color {
+  stroke: black;
+  stroke-opacity: 0.5;
+  stroke-width: 2;
+}
+
+.country-legend-country-name {
+  font-size: medium;
+}
+
+.line-marker {
+  stroke: black;
+  stroke-width: 1;
+  stroke-opacity: 0.5;
+}
