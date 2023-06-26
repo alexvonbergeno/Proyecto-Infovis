@@ -36,3 +36,10 @@ svg {
   stroke-width: 1;
   stroke-opacity: 0.5;
 }
+
+.tick {
+  stroke: black;
+  stroke-width: 1;
+  stroke-opacity: 0.5;
+  font-size: 10px;
+}
