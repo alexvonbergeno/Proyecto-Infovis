@@ -136,7 +136,7 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
         console.log('exit')
         exit
           .transition()
-          .duration(1000)
+          .duration(500)
           .attr('r', 0)
           .attr('opacity', 0)
           .remove()
