@@ -23,13 +23,6 @@ const top_svg = d3
   .attr("width", TOPWIDTH)
   .attr("height", TOPHEIGHT);
 
-top_svg.append("text")
-    .text("Top 5 ciudades más pobladas en 1970")
-    .attr("class", "title-text-top")
-    .attr("x", TOPWIDTH / 2)
-    .attr("y", 30)
-
-
 
 // Creamos el contenedor principal
 const graph = top_svg
@@ -58,12 +51,12 @@ const xaxis = graph
 
 function mostrargrafico(populationdata, year) {
       // Seleccionar el elemento h1 con la clase "ano" e ID "ano"
-    var title_text = document.querySelector('text.line-title-text');
+    var title_text = document.querySelector('h1.top5#top5');
 
     console.log(title_text.textContent, year)
 
     // Cambiar el texto del elemento seleccionado
-    title_text.textContent = "Top 5 ciudades más pobladas en " +  year;
+    title_text.innerText = "Top 5 ciudades más pobladas en " +  year.toString();
 
     // Ordena los datos en orden descendente y toma los primeros 5
     let top5 = populationdata.sort((a, b) => b.Population[year] - a.Population[year]).slice(0, 5);
