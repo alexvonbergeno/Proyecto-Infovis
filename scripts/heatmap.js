@@ -142,8 +142,6 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
           .remove()
       }
     )
-
-
 }
 
 
