@@ -60,6 +60,7 @@ var escalacolor;
 
 // Creamos el contenedor para el mapa
 function crearMapa(mapdata, populationdata, year) {
+  populationdat = populationdata;
 
   // Definir proyección a utilizar
   projection = d3.geoNaturalEarth1()
@@ -231,22 +232,23 @@ function actualizar() {
   // Extraemos el indice del año en la lista anos
   var index = anos.indexOf(ano);
 
-  console.log(index, ano, h1Element);
+  console.log(index, ano, h1Element, anos.length);
 
   // Si el año es el mismo que el anterior, no hacemos nada
   if (ano.toString() === h1Element) {
     // Si el indice es menor que el largo de la lista, sumamos 1
-    if (index < anos.length) {
+    if (index < anos.length - 1) {
       var ano = anos[index + 1];
     } else {
       // Si el indice es igual al largo de la lista, volvemos a 0
-      var ano = anos[0];
+      var ano = 2022;
     }
   }
 
  
   // Actualizamos el svg generado con la función generarcirculocalor
   generarcirculocalor(populationdat, projection, ano, escalacirculos, escalacolor);
+  mostrargrafico(populationdat, ano);
 }
 
 // Iniciamos el hilo

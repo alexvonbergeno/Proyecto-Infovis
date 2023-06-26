@@ -1,7 +1,7 @@
 // Definimos ctes de visualización
 
 const TOPWIDTH = 900;
-const TOPHEIGHT = 500;
+const TOPHEIGHT = 700;
 const TOPmargin = {
   top: 20,
   right: 50,
@@ -12,6 +12,7 @@ const TOPmargin = {
 const topwidth = TOPWIDTH - TOPmargin.left - TOPmargin.right;
 const topheight = TOPHEIGHT - TOPmargin.top - TOPmargin.bottom;
 
+var year = 1970; 
 
 
 
@@ -22,61 +23,116 @@ const top_svg = d3
   .attr("width", TOPWIDTH)
   .attr("height", TOPHEIGHT);
 
+top_svg.append("text")
+    .text("Top 5 ciudades más pobladas en 1970")
+    .attr("class", "title-text-top")
+    .attr("x", TOPWIDTH / 2)
+    .attr("y", 30)
+
+
 
 // Creamos el contenedor principal
 const graph = top_svg
   .append('g')
-  .attr('id', 'topgraph')
+  .attr('id', 'vis_graph')
   .attr('transform', `translate(${TOPmargin.left}, ${TOPmargin.top})`);
 
-// Ejes
+// Barras
+const bars = graph
+    .append('g')
+    .attr('id', 'bars')
+    .attr('transform', `translate(${TOPmargin.left}, ${TOPmargin.top})`);
+
+// Eje Y
+const yaxis = graph
+    .append('g')
+    .attr('id', 'yaxis')
+    .attr('transform', `translate(${TOPmargin.left}, ${TOPmargin.top})`);
+
+// Eje X
+const xaxis = graph 
+    .append('g')
+    .attr('id', 'xaxis')
+    .attr('transform', `translate(${TOPmargin.left}, ${520})`);
 
 
 function mostrargrafico(populationdata, year) {
+      // Seleccionar el elemento h1 con la clase "ano" e ID "ano"
+    var title_text = document.querySelector('text.line-title-text');
+
+    console.log(title_text.textContent, year)
+
+    // Cambiar el texto del elemento seleccionado
+    title_text.textContent = "Top 5 ciudades más pobladas en " +  year;
+
     // Ordena los datos en orden descendente y toma los primeros 5
     let top5 = populationdata.sort((a, b) => b.Population[year] - a.Population[year]).slice(0, 5);
 
-    // Crea las escalas
+    // Escala para el eje X
     let xScale = d3.scaleLinear()
         .domain([0, d3.max(top5, d => d.Population[year])])
-        .range([0, 800]);
+        .range([0, topwidth - TOPmargin.left - TOPmargin.right]);
 
     let yScale = d3.scaleBand()
         .domain(top5.map(d => d.Country))
-        .range([0, TOPHEIGHT - TOPmargin.bottom - TOPmargin.top])
+        .range([0, 500])
 
     // Crea una escala de color
     let colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-    // Crea el eje Y
-    let yAxis = d3.axisLeft(yScale);
+    // Entregamos datos a los ejes
+    xaxis.call(d3.axisBottom(xScale));
+    yaxis.call(d3.axisLeft(yScale));
 
-    // Agrega el eje Y al SVG
-    top_svg.append("g")
-    .call(yAxis);
 
-    // Crea las barras
-    let bars = top_svg.selectAll("rect")
-        .call(yAxis)
+    // Crea los rectángulos
+    bars
+        .selectAll('rect')
         .data(top5)
-        .enter()
-        .append("rect")
-        .attr("x", 0)
-        .attr("y", d => yScale(d.Country))
-        .attr("width", d => xScale(d.Population[year]))
-        .attr("height", yScale.bandwidth())
-        .attr("fill", (d, i) => colorScale(i)); // Agrega color
+        .join(
+            enter => {
+                const rect = enter.append('rect')
 
-    // Agrega etiquetas de texto a las barras
-    bars.append("text")
-        .attr("x", d => xScale(d.Population[year]) + 3) // Ajusta la posición en x
-        .attr("y", d => yScale(d.Country) + yScale.bandwidth() / 2) // Ajusta la posición en y
-        .text(d => d.Country) // Agrega el nombre del país
-        .attr("font-size", "10px")
-        .attr("fill", "black");
+                rect
+                    .attr('x', TOPmargin.left - 30)
+                    .attr('y', d => yScale(d.Country))
+                    .attr('width', d => xScale(d.Population[year]))
+                    .attr('height', yScale.bandwidth() - 10)
+                    .attr('fill', d => colorScale(d.Country))
+                    .attr('stroke', 'black')
+                    .attr('stroke-width', 1)
+                    .on('mouseover', function (event, d) {
+                        d3.select(this)
+                            .attr('stroke-width', 3)
+                            .attr('stroke', 'black')
+                    })
+                    .on('mouseout', function (event, d) {
+                        d3.select(this)
+                            .attr('stroke-width', 1)
+                            .attr('stroke', 'black')
+                    })
+                return rect
+            },
+            update => {
+                update
+                    .transition()
+                    .duration(100)
+                    .attr('x', TOPmargin.left - 30)
+                    .attr('y', d => yScale(d.Country))
+                    .attr('width', d => xScale(d.Population[year]))
+                    .attr('height', yScale.bandwidth() - 10)
+                    .attr('fill', d => colorScale(d.Country))
+                    
+            },
+            exit => {
+                exit
+                    .transition()
+                    .duration(100)
+                    .attr('width', 0)
+                    .remove()
+            }
+        )
 
-    bars.append("title")
-        .text(d => d.Country); // Agrega el valor de la población
 }
 
 
@@ -110,11 +166,6 @@ function parseFunction(d) {
     }
     return data
   }
-  
-  
-  
-
-var year = 1970 
 
 d3.csv("data/population.csv", parseFunction).then((populationdata) => {
     mostrargrafico(populationdata, year)
