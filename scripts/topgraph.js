@@ -23,7 +23,6 @@ const top_svg = d3
   .attr("width", TOPWIDTH)
   .attr("height", TOPHEIGHT);
 
-
 // Creamos el contenedor principal
 const graph = top_svg
   .append('g')
@@ -40,7 +39,8 @@ const bars = graph
 const yaxis = graph
     .append('g')
     .attr('id', 'yaxis')
-    .attr('transform', `translate(${TOPmargin.left}, ${TOPmargin.top})`);
+    .attr('transform', `translate(${TOPmargin.left}, ${TOPmargin.top})`)
+    .attr('font-size', '15px');
 
 // Eje X
 const xaxis = graph 
@@ -49,11 +49,11 @@ const xaxis = graph
     .attr('transform', `translate(${TOPmargin.left}, ${520})`);
 
 
+
 function mostrargrafico(populationdata, year) {
       // Seleccionar el elemento h1 con la clase "ano" e ID "ano"
     var title_text = document.querySelector('h1.top5#top5');
 
-    console.log(title_text.textContent, year)
 
     // Cambiar el texto del elemento seleccionado
     title_text.innerText = "Top 5 ciudades más pobladas en " +  year.toString();
@@ -74,7 +74,7 @@ function mostrargrafico(populationdata, year) {
     let colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     // Entregamos datos a los ejes
-    xaxis.call(d3.axisBottom(xScale));
+    xaxis.call(d3.axisBottom(xScale).tickFormat(t => `${t / 1000000} M`));
     yaxis.call(d3.axisLeft(yScale));
 
 
@@ -104,6 +104,12 @@ function mostrargrafico(populationdata, year) {
                             .attr('stroke-width', 1)
                             .attr('stroke', 'black')
                     })
+                    .on('click', function (event, d) {
+                        mostrarinfopais(populationdata, d.ID)
+                    })
+                
+                    rect.append('title')
+                      .text(d => `Poblacón: ${Math.floor(d.Population[year] / 1000000)} M`)
                 return rect
             },
             update => {
@@ -115,21 +121,32 @@ function mostrargrafico(populationdata, year) {
                     .attr('width', d => xScale(d.Population[year]))
                     .attr('height', yScale.bandwidth() - 10)
                     .attr('fill', d => colorScale(d.Country))
+                    .select('title')
+                    .text(d => `Población: ${Math.floor(d.Population[year] / 1000000)} M`)
+                    .end()
+                    .then(() => {
+                      update.on('click', function (event, d) {
+                        mostrarinfopais(populationdata, d.ID)
+                      })
+                    });
                     
             },
             exit => {
                 exit
-                    .transition()
-                    .duration(100)
-                    .attr('width', 0)
-                    .remove()
+                  .transition()
+                  .duration(100)
+                  .attr('width', 0)
+                  .remove()
             }
         )
 
+    // Elegimos al azar entre los 5 países
+    let random = Math.floor(Math.random() * 5);
+
+    // Llamamos a la función para mostrar la información del país
+    mostrarinfopais(populationdata, top5[random].ID)
+
 }
-
-
-
 
 
 function parseFunction(d) {
