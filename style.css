@@ -40,3 +40,134 @@ svg {
 .tick {
   font-size: 15px;
 }
+
+.shadow__btn {
+  padding: 10px 20px;
+  border: none;
+  font-size: 17px;
+  color: #fff;
+  border-radius: 7px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: 0.5s;
+  transition-property: box-shadow;
+}
+
+.shadow__btn {
+  background: rgb(0,140,255);
+  box-shadow: 0 0 25px rgb(0,140,255);
+}
+
+.shadow__btn:hover {
+  box-shadow: 0 0 5px rgb(0,140,255),
+              0 0 25px rgb(0,140,255),
+              0 0 50px rgb(0,140,255),
+              0 0 100px rgb(0,140,255);
+}
+
+.shadow__btn2 {
+  padding: 10px 20px;
+  border: none;
+  font-size: 17px;
+  color: #fff;
+  border-radius: 7px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: 0.5s;
+  transition-property: box-shadow;
+}
+
+.shadow__btn2 {
+  background: rgb(255, 0, 0);
+  box-shadow: 0 0 25px rgb(255, 0, 0);
+}
+
+.shadow__btn2:hover {
+  box-shadow: 0 0 5px rgb(255, 0, 0),
+              0 0 25px rgb(255, 0, 0),
+              0 0 50px rgb(255, 0, 0),
+              0 0 100px rgb(255, 0, 0);
+}
+
+.shadow__btn3 {
+  padding: 10px 20px;
+  border: none;
+  font-size: 17px;
+  color: #fff;
+  border-radius: 7px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: 0.5s;
+  transition-property: box-shadow;
+}
+
+.shadow__btn3 {
+  background: rgb(255, 150, 0);
+  box-shadow: 0 0 25px rgb(255, 150, 0);
+}
+
+.shadow__btn3:hover {
+  box-shadow: 0 0 5px rgb(255, 150, 0),
+              0 0 25px rgb(255, 150, 0),
+              0 0 50px rgb(255, 150, 0),
+              0 0 100px rgb(255, 150, 0);
+}
+
+
+
+.button_repeat {
+  justify-content: center;
+  align-items: center;
+  padding: 6px 12px;
+  gap: 8px;
+  width: 112px;
+  border: none;
+  background: #ff362b34;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.button_inf {
+  position: fixed;
+  top: 40px;
+  right: 20px;
+  transform: translateY(-50%);
+  background: linear-gradient(-45deg, #3f00b5, #9f69fe, #27c8b7, #3f00b5);
+  background-size: 800% 400%;
+  padding: 1em 2em;
+  display: inline-block;
+  border: none;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+  transition: all .5s ease-in-out;
+  animation: gradient 10s infinite cubic-bezier(.62, .28, .23, .99) both;
+}
+
+.button_inf:hover {
+  animation: gradient 3s infinite;
+  transform: scale(1.05);
+}
+
+.button_inf:active {
+  animation: gradient 3s infinite;
+  transform: scale(0.8);
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}

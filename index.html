@@ -8,11 +8,19 @@
         <title>Proyecto InfoVis</title>
     </head>
     <body>
+        <button class="button_inf" onclick="window.location.href='informe.html'">Informe</button>
         <h2>Visualización de la población de cada pais desde 1970 hasta 2022</h2>
         <h1 class="ano" id="ano">1970</h1>
-        <button onclick="reproducirCancion()">PartyMode</button>
-        <button onclick="pausarCancion()">Stop PartyMode</button>
-        <button onclick="detenerCancion()">Restart PartyMode</button>
+        <!-- Colocamos un boton para ir a informe.html -->
+        
+        
+        <div class="buttons_section">
+            <h3>Para ver los datos de una manera más dinamica y motivada presiona el botón "PartyMode"</h3>
+            <button class="shadow__btn" onclick="reproducirCancion()">PartyMode</button>
+            <button class="shadow__btn3" onclick="pausarCancion()">Stop</button>
+            <button class="shadow__btn2" onclick="detenerCancion()">Restart</button>
+        </div>
+ 
         <div id="heatmap"></div>
 
         <h1 class="top5" id="top5">Top 5 ciudades más pobladas en 1970</h1>
