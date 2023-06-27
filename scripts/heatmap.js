@@ -126,6 +126,13 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
           .attr('opacity', 1)
           .attr('stroke', 'black')
           .attr('stroke-width', 0.5)
+
+        // Añadimos un título para mostrar el nombre del país y la población
+        circle.append('title')
+          .text(d => `${d.Country}: ${Math.floor(d.Population[year] / 1000000)} M`)
+
+
+
         
         return circle
       },
@@ -137,7 +144,9 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
           .attr('cx', d => projection([d.Longitude, d.Latitude])[0])
           .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
           .attr('r', d =>  escalacirculos(d.Population[year]))
-          .attr('fill', d => escalacolor(d.Population[year]));
+          .attr('fill', d => escalacolor(d.Population[year]))
+          .select('title')
+          .text(d => `${d.Country}: ${Math.floor(d.Population[year] / 1000000)} M`);
         
           return update
       },
