@@ -51,9 +51,15 @@ const anos = [2022, 2020, 2015, 2010, 2000, 1990, 1980, 1970];
 var projection;
 var populationdat;
 var datos;
+
 var zoom = d3.zoom()
   .scaleExtent([1, 8])
+  .translateExtent([[0, 0], [width, height]])
   .on('zoom', zoomed);
+
+svg.call(zoom);
+
+
 var escalacirculos;
 var escalacolor;
 
