@@ -8,11 +8,11 @@ const SVGLINE = d3.select("#line-vis")
   .attr("height", LINEHEIGHT)
   .attr("width", LINEWIDTH)
 
-SVGLINE.append("text")
-  .text("Población por País")
-  .attr("class", "line-title-text")
-  .attr("x", LINEWIDTH / 2)
-  .attr("y", 30)
+// SVGLINE.append("text")
+//  .text("Crecimiento de Población")
+//  .attr("class", "line-title-text")
+//  .attr("x", LINEWIDTH / 2)
+//  .attr("y", 30)
 
 const LINEMARGIN = {
   top: 120,
@@ -25,7 +25,7 @@ const crossShape = d3.symbol(d3.symbolsStroke[2])
 const emptyCountry = {
   Rank: 0,
   CCA3: "",
-  Country: "Add Country",
+  Country: "Reset",
   color: "#FFFFFF",
   popdata: [
     { date: 1970, population: 0 },
@@ -38,6 +38,7 @@ const emptyCountry = {
     { date: 2022, population: 0 }
   ]
 }
+let ALLCOUNTRIES = []
 const MAXPOP =  1500000000
 const LineAnimationDelay = 500
 const TimeStart = 1970
@@ -46,26 +47,16 @@ const LineWidthScale = d3
   .scaleLinear()
   .domain([1965, 2025])
   .range([LINEMARGIN.left, LINEWIDTH-LINEMARGIN.right])
-    
-
-
-const LineHeightScale = d3
-  .scaleLinear()
-  .domain([0, MAXPOP])
-  .range([LINEHEIGHT - LINEMARGIN.top, LINEMARGIN.bot])
-
+let LineHeightScale = {}
 
 const LineColors = d3.schemeSet1
+let i = 0
 
 // Ejes
 
 const xAxis = d3.axisBottom(LineWidthScale)
   .tickValues([1970, 1980, 1990, 2000, 2010, 2015, 2020, 2022])
   .tickFormat(d => String(d).replace(",", ""))
-
-const yAxisTickFormat = d3.format("~")
-const yAxis = d3.axisLeft(LineHeightScale)
-  .tickFormat(t => `${t / 1000000} M`)
 
 SVGLINE.append("g")
   .attr("transform", `translate(${0}, ${LINEHEIGHT - LINEMARGIN.top})`)
@@ -74,36 +65,60 @@ SVGLINE.append("g")
   .style("text-anchor", "end")
   .attr("font-size", 18)
   .attr("transform", "translate(-8) rotate(-50)")
-    
-
-SVGLINE.append("g")
-  .attr("transform", `translate(${LINEMARGIN.left}, ${0})`)
-  .call(yAxis)
-  .selectAll("text")
-  .attr("font-size", 15);
 
 
 // Grid
-const VerticalGridlines = d3.axisBottom()
-  .tickFormat("")
-  .tickSize(-LINEHEIGHT + LINEMARGIN.top + LINEMARGIN.bot)
-  .scale(LineWidthScale);
 
-const HorizontalGridlines = d3.axisLeft()
-  .tickFormat("")
-  .tickSize(-LINEWIDTH + LINEMARGIN.left + LINEMARGIN.right)
-  .scale(LineHeightScale);
+let VerticalGridlines = d3.axisBottom()
+.tickFormat("")
+.tickSize(-LINEHEIGHT + LINEMARGIN.top + LINEMARGIN.bot)
+.scale(LineWidthScale);
 
 SVGLINE.append("g")
-  .attr("transform", `translate(${0}, ${LINEHEIGHT - LINEMARGIN.top})`)
-  .call(VerticalGridlines)
-  .style("opacity", 0.2)
+.attr("transform", `translate(${0}, ${LINEHEIGHT - LINEMARGIN.top})`)
+.call(VerticalGridlines)
+.style("opacity", 0.2)
 
-SVGLINE.append("g")
-  .attr("transform", `translate(${LINEMARGIN.left}, ${0})`)
-  .call(HorizontalGridlines)
-  .style("opacity", 0.2)
 
+
+function makeYaxis(max_pop) {
+  max_pop = 1.08 * max_pop
+
+  LineHeightScale = d3
+    .scaleLinear()
+    .domain([0, max_pop])
+    .range([LINEHEIGHT - LINEMARGIN.top, LINEMARGIN.bot])
+
+  //let yAxisTickFormat = d3.format("~")
+  let yAxis = d3.axisLeft(LineHeightScale)
+  if (max_pop > 1000000000) {
+    yAxis.tickFormat(t => `${t / 1000000} M`)
+  } else if( max_pop > 1000000) { 
+    yAxis.tickFormat(t => `${t / 1000000} K`)
+  }
+
+  SVGLINE.select("#yaxis").remove()
+
+  SVGLINE.append("g")
+    .attr("transform", `translate(${LINEMARGIN.left}, ${0})`)
+    .attr("id", "yaxis")
+    .call(yAxis)
+    .selectAll("text")
+    .attr("font-size", 15);
+
+  const HorizontalGridlines = d3.axisLeft()
+    .tickFormat("")
+    .tickSize(-LINEWIDTH + LINEMARGIN.left + LINEMARGIN.right)
+    .scale(LineHeightScale);
+  SVGLINE.select("#horizontalgridlines").remove()
+  SVGLINE.append("g")
+    .attr("transform", `translate(${LINEMARGIN.left}, ${0})`)
+    .attr("id", "horizontalgridlines")
+    .call(HorizontalGridlines)
+    .style("opacity", 0.2)
+}
+
+makeYaxis(MAXPOP)
 
 // Lineas
 const line = d3.line()
@@ -152,7 +167,6 @@ function makeLineGraph(data) {
       update.attr("id", d => `line-group-${d.Rank}`).attr("opacity", d => Number(!(d.Rank == 0)))
       update.call(g => g.selectAll("circle.line-marker")
         .transition()
-        .call(d => console.log(d))
         .duration(300)
         .attr("r", 0)
         .transition()
@@ -215,13 +229,7 @@ function makeLineGraph(data) {
           })
           .attr("opacity", 0)
           .on("mouseover", showCross)
-          .on("click", (d, i) => {
-            if (d.Rank == 0) {
-              addCountry(d, i)
-            } else {
-              removeCountry(d, i)
-            }
-          })
+          .on("click", removeCountry)
         
       },
       update => {
@@ -245,13 +253,7 @@ function makeLineGraph(data) {
             }
           })
           .on("mouseover", showCross)
-          .on("click", (d, i) => {
-            if (d.Rank == 0) {
-              addCountry(d, i)
-            } else {
-              removeCountry(d, i)
-            }
-          })
+          .on("click", removeCountry)
         )
         update.attr("id", d => `legendcontainer-${d.Rank}`)
       }
@@ -260,16 +262,52 @@ function makeLineGraph(data) {
 }
 
 function removeCountry(d, i) {
-  const toRemoveIndex = selectedCountries.indexOf(i)
-  selectedCountries.splice(toRemoveIndex, 1)
-  if (!selectedCountries.includes(emptyCountry)) { 
-    selectedCountries.push(emptyCountry)
+  if (i.Rank == 0) { 
+    resetCountries()
+  } else {
+    const toRemoveIndex = selectedCountries.indexOf(i)
+    selectedCountries.splice(toRemoveIndex, 1)
+    if (!selectedCountries.includes(emptyCountry)) { 
+      selectedCountries.push(emptyCountry)
+    }
+    makeYaxis(getMaxPop(selectedCountries))
+    makeLineGraph(selectedCountries)
   }
-  makeLineGraph(selectedCountries)
+}
+
+function getMaxPop(countries) {
+  let max_pop_country = countries.reduce((prev, curr) => (prev.popdata[7].population > curr.popdata[7].population) ? prev : curr)
+  return max_pop = max_pop_country.popdata[7].population
+}
+
+function sortByPop(countries) {
+  return countries.sort((a, b) => b.popdata[7].population - a.popdata[7].population)
+}
+
+function resetCountries() {
+  d3.csv("data/population.csv", parseRowCSV).then((populationdata) => {
+    i = 0
+    ALLCOUNTRIES = populationdata
+    selectedCountries = populationdata.slice(0, 8)
+    console.log("Loaded 8 most populous countries for line graph")
+    selectedCountries.unshift(emptyCountry)
+    
+    let max_pop = getMaxPop(selectedCountries)
+    makeYaxis(max_pop)
+    makeLineGraph(selectedCountries)
+  })
 }
 
 function addCountry(d, i) {
-  console.log("I want to add a country")
+  let countrytoadd = ALLCOUNTRIES.find(c => c.ID == i.ID)
+  let alreadySelected = selectedCountries.find(c => c.ID == countrytoadd.ID) != undefined
+  if (!alreadySelected && selectedCountries.length < 12) {
+    selectedCountries.push(countrytoadd)
+    selectedCountries = sortByPop(selectedCountries.slice(1))
+    selectedCountries.unshift(emptyCountry)
+    makeYaxis(getMaxPop(selectedCountries))
+    makeLineGraph(selectedCountries)
+  }
 }
 
 function showCross(d, i) {
@@ -293,6 +331,7 @@ function hideCrosses(d, i) {
 
 function parseRowCSV(d) {
   const data = {
+    ID: +d.ID,
     Rank: +d.Rank,
     CCA3: d.CCA3,
     Country: d.Country,
@@ -312,10 +351,4 @@ function parseRowCSV(d) {
   return data
 }
 
-let i = 0;
-d3.csv("data/population.csv", parseRowCSV).then((populationdata) => {
-  selectedCountries = populationdata.slice(0, 8)
-  console.log("Loaded 8 most populous countries for line graph")
-  selectedCountries.push(emptyCountry)
-  makeLineGraph(selectedCountries)
-})
+resetCountries()

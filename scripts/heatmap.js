@@ -1,7 +1,7 @@
 // Definimos ctes de visualización
 
-const WIDTH = 1800;
-const HEIGHT = 900;
+const WIDTH = 1200;
+const HEIGHT = 600;
 const margin = {
   top: 20,
   right: 50,
@@ -132,6 +132,7 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
           .attr('opacity', 1)
           .attr('stroke', 'black')
           .attr('stroke-width', 0.5)
+          .on("click", addCountry)
 
         // Añadimos un título para mostrar el nombre del país y la población
         circle.append('title')
@@ -151,6 +152,7 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
           .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
           .attr('r', d =>  escalacirculos(d.Population[year]))
           .attr('fill', d => escalacolor(d.Population[year]))
+          .on("click", addCountry)
           .select('title')
           .text(d => `${d.Country}: ${Math.floor(d.Population[year] / 1000000)} M`);
         
