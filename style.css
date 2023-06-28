@@ -27,6 +27,12 @@ svg {
   stroke-width: 2;
 }
 
+.country-legend-cross {
+  stroke: black;
+  stroke-opacity: 0.5;
+  stroke-width: 2;
+}
+
 .country-legend-country-name {
   font-size: medium;
 }

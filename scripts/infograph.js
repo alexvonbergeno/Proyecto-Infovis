@@ -44,7 +44,7 @@ function mostrarinfopais(populationdata, id) {
   var title_text = document.querySelector('h1#info');
 
   // Cambiar el texto del elemento seleccionado
-  title_text.innerText = "Gráfico de crecimiento de la población de " + pais.Country;
+  title_text.innerText = `Gráfico de crecimiento de la población de ${pais.Country}`;
 
   // Crear escala para el eje X
   const xScale = d3.scaleLinear()
