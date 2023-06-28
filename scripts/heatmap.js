@@ -173,6 +173,7 @@ function zoomed(event) {
   // console.log(event.transform);
   mapcontainer.attr("transform", event.transform);
   heatcircules.attr("transform", event.transform);
+  heatcircules.selectAll("circle").attr("r", d => (1 / event.transform.k) * escalacirculos(d.Population[year]))
 }
 
 
