@@ -1,25 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Proyecto InfoVis</title>
-</head>
-<body>
-    <h2>Visualización de la población de cada pais desde 1990 hasta 2022</h2>
-    <!-- <button onclick="reproducirCancion()">Reproducir</button>
-    <button onclick="pausarCancion()">Pausar</button>
-    <button onclick="detenerCancion()">Detener</button>
-    <button onclick="prueba()">Prueba</button> -->
-    <div id="vis"></div>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>Proyecto InfoVis</title>
+    </head>
+    <body>
+        <button class="button_inf" onclick="window.location.href='informe.html'">Informe</button>
+        <h2>Visualización de la población de cada pais desde 1970 hasta 2022</h2>
+        <h1 class="ano" id="ano">1970</h1>
+        <!-- Colocamos un boton para ir a informe.html -->
+        
+        
+        <div class="buttons_section">
+            <h3>Para ver los datos de una manera más dinamica y motivada presiona el botón "PartyMode"</h3>
+            <button class="shadow__btn" onclick="reproducirCancion()">PartyMode</button>
+            <button class="shadow__btn3" onclick="pausarCancion()">Stop</button>
+            <button class="shadow__btn2" onclick="detenerCancion()">Restart</button>
+        </div>
+ 
+        <div id="heatmap"></div>
 
-    <div id="line-vis"></div>
+        <h1 class="top5" id="top5">Top 5 ciudades más pobladas en 1970</h1>
 
-</body>
-<script src="http://d3js.org/d3.v7.min.js" charset="utf-8"></script>
-<script src="https://d3js.org/d3-geo-projection.v4.min.js"></script>
-<script src="scripts/heatmap.js"></script>
-<script src="scripts/linegraph.js"></script>
+        <div id="topgraph"></div>
+        
+        <h1 class="info" id="info"></h1>
+        <div id="infograph"></div>
+
+        <div id="line-vis"></div>
+
+    </body>
+
+    <script src="http://d3js.org/d3.v7.min.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3-geo-projection.v4.min.js"></script>
+    <script src="scripts/heatmap.js"></script>
+    <script src="scripts/linegraph.js"></script>
+    <script src="scripts/topgraph.js"></script>
+    <script src="scripts/infograph.js"></script>
 </html>

@@ -17,7 +17,7 @@ const height = HEIGHT - margin.top - margin.bottom;
 
 // Creamos el svg
 const svg = d3
-  .select("#vis")
+  .select("#heatmap")
   .append("svg")
   .attr("width", WIDTH)
   .attr("height", HEIGHT);
@@ -38,22 +38,35 @@ const heatcircules = svg
 
 //
 
+var audio;
+audio = new Audio('PartyMode.mp3');
+
+// Definimos una variable para controlar si el hilo está activo
+let activo = false;
+
+// Lista de años para seleccionar al azar
+const anos = [2022, 2020, 2015, 2010, 2000, 1990, 1980, 1970];
+
 
 var projection;
 var populationdat;
 var datos;
+
 var zoom = d3.zoom()
   .scaleExtent([1, 8])
+  .translateExtent([[0, 0], [width, height]])
   .on('zoom', zoomed);
+
+svg.call(zoom);
+
+
 var escalacirculos;
 var escalacolor;
 
 
 // Creamos el contenedor para el mapa
 function crearMapa(mapdata, populationdata, year) {
-  populationdat = populationdata
-  // console.log(mapdata);
-  // console.log(populationdata);
+  populationdat = populationdata;
 
   // Definir proyección a utilizar
   projection = d3.geoNaturalEarth1()
@@ -97,7 +110,10 @@ function crearMapa(mapdata, populationdata, year) {
 
 function generarcirculocalor(populationdata, projection, year, escalacirculos, escalacolor) {
 
-  console.log(year)
+  // Seleccionar el elemento h1 con la clase "ano" e ID "ano"
+  var h1Element = document.querySelector('h1.ano#ano');
+
+  h1Element.innerText = year;
 
   heatcircules
     .selectAll('circle')
@@ -105,7 +121,6 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
     .join(
       enter => {
         const circle = enter.append('circle')
-        console.log('enter')
 
         // Lo fijamos en la coordenada correspondiente
         circle
@@ -117,6 +132,13 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
           .attr('opacity', 1)
           .attr('stroke', 'black')
           .attr('stroke-width', 0.5)
+
+        // Añadimos un título para mostrar el nombre del país y la población
+        circle.append('title')
+          .text(d => `${d.Country}: ${Math.floor(d.Population[year] / 1000000)} M`)
+
+
+
         
         return circle
       },
@@ -124,26 +146,25 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
         // En la fase de actualización, cambiamos los atributos de los círculos existentes
         update
           .transition()
-          .duration(1000)
+          .duration(100)
           .attr('cx', d => projection([d.Longitude, d.Latitude])[0])
           .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
           .attr('r', d =>  escalacirculos(d.Population[year]))
-          .attr('fill', d => escalacolor(d.Population[year]));
+          .attr('fill', d => escalacolor(d.Population[year]))
+          .select('title')
+          .text(d => `${d.Country}: ${Math.floor(d.Population[year] / 1000000)} M`);
         
           return update
       },
       exit => {
-        console.log('exit')
         exit
           .transition()
-          .duration(1000)
+          .duration(100)
           .attr('r', 0)
           .attr('opacity', 0)
           .remove()
       }
     )
-
-
 }
 
 
@@ -151,16 +172,6 @@ function zoomed(event) {
   // console.log(event.transform);
   mapcontainer.attr("transform", event.transform);
   heatcircules.attr("transform", event.transform);
-}
-
-function prueba() {
-  console.log('prueba');
-  console.log(projection)
-  console.log(escalacirculos)
-  console.log(escalacolor)
-  console.log(populationdat)
-
-  generarcirculocalor(populationdat, projection, 1980, escalacirculos, escalacolor)
 }
 
 
@@ -192,8 +203,10 @@ function parseFunction(d) {
   }
   return data
 }
-var audio;
-audio = new Audio('cancion.mp3');
+
+
+
+
 
 function reproducirCancion() {
   audio.play();
@@ -210,17 +223,13 @@ function pausarCancion() {
 function detenerCancion() {
   if (audio) {
     audio.pause();
+    activo = false;
     audio.currentTime = 0;
   }
 }
 
 
 
-// Definimos una variable para controlar si el hilo está activo
-let activo = false;
-
-// Lista de años para seleccionar al azar
-const anos = [2022, 2020, 2015, 2010, 2000, 1990, 1980, 1970];
 
 // Definimos la función que se ejecutará cada 1.5 segundos
 function actualizar() {
@@ -229,15 +238,35 @@ function actualizar() {
   }
 
   // Seleccionamos un año al azar de la lista
-  const ano = anos[Math.floor(Math.random() * anos.length)];
+  var ano = anos[Math.floor(Math.random() * anos.length)];
+  // Seleccionar el elemento h1 con la clase "ano" e ID "ano"
+  var h1Element = document.querySelector('h1.ano#ano').innerText
 
-  // console.log(ano);
+  // Extraemos el indice del año en la lista anos
+  var index = anos.indexOf(ano);
+
+  console.log(index, ano, h1Element, anos.length);
+
+  // Si el año es el mismo que el anterior, no hacemos nada
+  if (ano.toString() === h1Element) {
+    // Si el indice es menor que el largo de la lista, sumamos 1
+    if (index < anos.length - 1) {
+      var ano = anos[index + 1];
+    } else {
+      // Si el indice es igual al largo de la lista, volvemos a 0
+      var ano = 2022;
+    }
+  }
+
+ 
   // Actualizamos el svg generado con la función generarcirculocalor
   generarcirculocalor(populationdat, projection, ano, escalacirculos, escalacolor);
+  mostrargrafico(populationdat, ano);
 }
 
 // Iniciamos el hilo
 const intervalId = setInterval(actualizar, 1000);
+
 
 // Si quieres detener el hilo en algún momento, puedes usar
 // clearInterval(intervalId);
@@ -248,7 +277,7 @@ const intervalId = setInterval(actualizar, 1000);
 
 
 
-const year = 2022
+var year = 1970
 
 // Cargamos los datos
 d3.json("data/countries.geojson").then((datos) => {
