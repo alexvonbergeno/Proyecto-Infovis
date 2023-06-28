@@ -11,7 +11,7 @@
 
             <div class="response">
                 <h3>Integrantes</h2>
-                    <p>Nombre 1</p>
+                    <p>Rodrigo Ogalde Lisboa</p>
                     <p>Sebasthian von Bergen</p>
             </div>
 
@@ -118,7 +118,24 @@
                         <h4>Decisiones de diseño relacionadas a la primera tarea visual</h4>
                         <!-- Puedes agregar los P que sean necesarios -->
                         <h4>Respuesta:</h4>
-                        <p>Modifica solo este texto (no el de arriba) para poner tu respuesta</p>
+                        <ol>
+                            <li>Codificaciones visuales:</li>
+                            <ol>
+                                <ul>Posición: Las coordenadas de latitud y longitud de cada país se utilizan para determinar la posición de los círculos en el mapa.</ul>
+                                <ul>Color: Se utiliza una escala de color logarítmica para representar la población de cada país. Los colores varían desde "#F3FF00" (amarillo) para las poblaciones más pequeñas hasta "#FF0000" (rojo) para las poblaciones más grandes.</ul>
+                                <ul>Tamaño: El tamaño de cada círculo se determina por la población del país. Se utiliza una escala logarítmica para determinar el radio de cada círculo en función de la población.</ul>
+                                <ul>Forma: Todos los datos se representan como círculos en el mapa.</ul>
+                            </ol>
+                            <li>Interacciones:</li>
+                            <ol>
+                                <ul>Zoom y panorámica: Los usuarios pueden hacer zoom y panorámica en el mapa. Cuando se hace zoom, el tamaño de los círculos se ajusta para mantener la proporción correcta.</ul>
+                                <ul>Clic: Al hacer clic en un círculo, se añade el país correspondiente a una lista de países seleccionados.</ul>
+                                <ul>Tooltip: Cuando el usuario pasa el cursor sobre un círculo, se muestra un tooltip con el nombre del país y su población.</ul>
+                                <ul>Actualización automática: Hay un intervalo establecido que actualiza la visualización cada segundo. Durante cada actualización, se selecciona un año al azar de la lista de años y se actualizan los círculos para reflejar los datos de población de ese año.</ul>
+                                <ul>Control de audio: Hay funciones para reproducir, pausar y detener una canción. La canción se reproduce mientras la visualización está activa.</ul>
+                                <ul>Selección de año: Hay una lista desplegable que permite al usuario seleccionar un año específico. Cuando se selecciona un año, se actualizan los círculos para reflejar los datos de población de ese año.</ul>
+                            </ol>
+                        </ol>
                     </div>
                     <div class="response">
                         <h4>Decisiones de diseño relacionadas a la segunda tarea visual</h4>
@@ -130,7 +147,22 @@
                         <h4>Decisiones de diseño relacionadas a la tercera tarea visual</h4>
                         <!-- Puedes agregar los P que sean necesarios -->
                         <h4>Respuesta:</h4>
-                        <p>Modifica solo este texto (no el de arriba) para poner tu respuesta</p>
+                        <ol>
+                            <li>Codificaciones visuales:</li>
+                            <ol>
+                                <ul>Posición: La posición en el eje Y de cada barra se determina por el nombre del país. La posición en el eje X de cada barra se determina por la población del país.</ul>
+                                <ul>Color: Cada barra tiene un color que se determina por el nombre del país. Se utiliza una escala de color ordinal para asignar un color único a cada país.</ul>
+                                <ul>Tamaño: El tamaño (ancho) de cada barra se determina por la población del país. Se utiliza una escala lineal para determinar el ancho de cada barra en función de la población.</ul>
+                            </ol>
+                            <li>Interacciones:</li>
+                            <ol>
+                                <ul>Hover: Cuando el usuario pasa el cursor sobre una barra, el grosor del borde de la barra aumenta y el color del borde se vuelve negro.</ul>
+                                <ul>Clic: Al hacer clic en una barra, se añade el país correspondiente a una lista de países seleccionados.</ul>
+                                <ul>Tooltip: Cuando el usuario pasa el cursor sobre una barra, se muestra un tooltip con la población del país.</ul>
+                                <ul>Actualización de datos: Cuando se llama a la función mostrargrafico, se actualizan los datos del gráfico de barras. Las barras existentes se actualizan para reflejar los nuevos datos, y las barras que ya no están en los datos se eliminan. Las nuevas barras se añaden para los nuevos datos.</ul>
+                                <ul>Selección de datos: Al principio del código, se seleccionan los 8 países con la mayor población para el año especificado. Estos datos se utilizan para generar el gráfico de barras.</ul>
+                            </ol>
+                        </ol>
                     </div>
             </div>
 
@@ -140,42 +172,4 @@
                 </h3>
             </div>
     </body>
-<!--
-    <body class="informe-body">
-        <h1 class="informe-title">Proyecto InfoVis</h1>
-        
-        <button onclick="window.location.href='index.html'">Volver</button>
-
-        <div>
-
-        </div>
-        <h2 class="informe-title">Introducción</h2>
-
-        <div>
-            <h3 class="informe-title">¿Como están organizados los datos?</h3>
-            Naturaleza de los datos del Dataset:
-            <p></p>
-        </div>
-
-        <div>
-            <h3 class="informe-title">¿Como se obtuvieron los datos?</h3>
-            Contexto de los datos
-            
-            
-        </div>
-
-        <div>
-            <h3 class="informe-title">¿Quién es el público objetivo?</h3>
-                Potenciales usuarios objetivos
-                
-                    
-        </div>
-
-        <div>
-            <h3 class="informe-title">¿Qué preguntas se pueden responder con los datos?</h3>
-            
-        </div>
-
-    </body>
--->
 </html>
