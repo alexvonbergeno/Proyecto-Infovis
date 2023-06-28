@@ -127,7 +127,7 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
           .attr('cx', d => projection([d.Longitude, d.Latitude])[0])
           .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
           .attr('class', 'heatcircle')
-          .attr('r', d =>  escalacirculos(d.Population[year]))
+          .attr('r', d =>  (1/k) * escalacirculos(d.Population[year]))
           .attr('fill', d => escalacolor(d.Population[year]))
           .attr('opacity', 1)
           .attr('stroke', 'black')
@@ -150,7 +150,7 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
           .duration(100)
           .attr('cx', d => projection([d.Longitude, d.Latitude])[0])
           .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
-          .attr('r', d =>  escalacirculos(d.Population[year]))
+          .attr('r', d =>  (1 / k) * escalacirculos(d.Population[year]))
           .attr('fill', d => escalacolor(d.Population[year]))
           .select('title')
           .text(d => `${d.Country}: ${Math.floor(d.Population[year] / 1000000)} M`);
@@ -174,6 +174,7 @@ function zoomed(event) {
   mapcontainer.attr("transform", event.transform);
   heatcircules.attr("transform", event.transform);
   heatcircules.selectAll("circle").attr("r", d => (1 / event.transform.k) * escalacirculos(d.Population[year]))
+  k = event.transform.k
 }
 
 
@@ -289,7 +290,7 @@ function setYear(ano) {
 
 
 var year = 1970
-
+var k = 1
 // Cargamos los datos
 d3.json("data/countries.geojson").then((datos) => {
     d3.csv("data/population.csv", parseFunction).then((populationdata) => {
