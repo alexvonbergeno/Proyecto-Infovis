@@ -1,7 +1,7 @@
 // Definimos ctes de visualización
 
 const TOPWIDTH = 900;
-const TOPHEIGHT = 700;
+const TOPHEIGHT = 600;
 const TOPmargin = {
   top: 20,
   right: 50,

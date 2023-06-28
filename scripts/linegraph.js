@@ -15,7 +15,7 @@ const SVGLINE = d3.select("#line-vis")
 //  .attr("y", 30)
 
 const LINEMARGIN = {
-  top: 120,
+  top: 60,
   bot: 120,
   left: 120,
   right: 200

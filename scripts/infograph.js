@@ -1,8 +1,8 @@
-const info_svg = d3
-  .select("#infograph")
-  .append("svg")
-  .attr("width", TOPWIDTH + 120)
-  .attr("height", TOPHEIGHT);
+//const info_svg = d3
+//  .select("#infograph")
+//  .append("svg")
+//  .attr("width", TOPWIDTH + 120)
+//  .attr("height", TOPHEIGHT);
 
 const info = info_svg
   .append('g')

@@ -152,7 +152,6 @@ function generarcirculocalor(populationdata, projection, year, escalacirculos, e
           .attr('cy', d => projection([d.Longitude, d.Latitude])[1])
           .attr('r', d =>  escalacirculos(d.Population[year]))
           .attr('fill', d => escalacolor(d.Population[year]))
-          .on("click", addCountry)
           .select('title')
           .text(d => `${d.Country}: ${Math.floor(d.Population[year] / 1000000)} M`);
         
@@ -275,7 +274,12 @@ const intervalId = setInterval(actualizar, 1000);
 
 
 
-
+function setYear(ano) {
+  year = ano
+  generarcirculocalor(populationdat, projection, ano, escalacirculos, escalacolor);
+  mostrargrafico(populationdat, ano);
+  
+}
 
 
 
