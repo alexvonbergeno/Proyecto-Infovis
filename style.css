@@ -1,9 +1,24 @@
 p {
-  text-align: center; 
+  text-align: justify;
 }
 
 body {
+  text-align: justify;  
+}
+
+.informe-body {
+  font-size: large;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-bottom: 10%;
+}
+
+.informe-title {
   text-align: center;
+}
+
+.informe-list > ul {
+  padding-bottom: 5px;
 }
 
 svg {
@@ -45,6 +60,14 @@ svg {
 
 .tick {
   font-size: 15px;
+}
+
+.top5 {
+  text-align: center;
+}
+
+.buttons_section {
+  text-align: center;
 }
 
 .year_picker__btn {
