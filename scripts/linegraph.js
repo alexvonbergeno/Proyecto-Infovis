@@ -160,7 +160,11 @@ function makeLineGraph(data) {
         .transition()
         .delay(LineAnimationDelay)
         .duration(500)
-        .attr("r", 5)
+        .attr("r", 8)
+      
+      g.selectAll("circle.line-marker")
+        .append("title")
+        .text(d => `Población: ${Math.floor(d.population / 1000000)} M`)
      },
 
     update => {
