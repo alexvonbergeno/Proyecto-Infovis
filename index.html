@@ -10,6 +10,16 @@
     <body>
         <button class="button_inf" onclick="window.location.href='informe.html'">Informe</button>
         <h2>Visualización de la población de cada pais desde 1970 hasta 2022</h2>
+        <div class="buttons_section">
+            <button class="year_picker__btn" onclick="setYear(1970)">1970</button>
+            <button class="year_picker__btn" onclick="setYear(1980)">1980</button>
+            <button class="year_picker__btn" onclick="setYear(1990)">1990</button>
+            <button class="year_picker__btn" onclick="setYear(2000)">2000</button>
+            <button class="year_picker__btn" onclick="setYear(2010)">2010</button>
+            <button class="year_picker__btn" onclick="setYear(2015)">2015</button>
+            <button class="year_picker__btn" onclick="setYear(2020)">2020</button>
+            <button class="year_picker__btn" onclick="setYear(2022)">2022</button>
+        </div>
         <h1 class="ano" id="ano">1970</h1>
         <!-- Colocamos un boton para ir a informe.html -->
         
@@ -23,15 +33,16 @@
  
         <div id="heatmap"></div>
 
-        <h1 class="top5" id="top5">Top 5 ciudades más pobladas en 1970</h1>
+        
 
-        <div id="topgraph"></div>
+        
 
-        <h1 class="info" id="info"></h1>
+        <!--<h1 class="info" id="info"></h1>-->
         <div id="infograph"></div>
 
-        <h1>Crecimiento de Población</h1>
         <div id="line-vis"></div>
+        <h1 class="top5" id="top5">Top 5 ciudades más pobladas en 1970</h1>
+        <div id="topgraph"></div>
 
     </body>
 
