@@ -28,17 +28,18 @@ const emptyCountry = {
   Country: "Reset",
   color: "#FFFFFF",
   popdata: [
-    { date: 1970, population: 0 },
-    { date: 1980, population: 0 },
-    { date: 1990, population: 0 },
-    { date: 2000, population: 0 },
-    { date: 2010, population: 0 },
-    { date: 2015, population: 0 },
-    { date: 2020, population: 0 },
-    { date: 2022, population: 0 }
+    { date: 1970, population: 0, Country: "Reset" },
+    { date: 1980, population: 0, Country: "Reset" },
+    { date: 1990, population: 0, Country: "Reset" },
+    { date: 2000, population: 0, Country: "Reset" },
+    { date: 2010, population: 0, Country: "Reset" },
+    { date: 2015, population: 0, Country: "Reset" },
+    { date: 2020, population: 0, Country: "Reset" },
+    { date: 2022, population: 0, Country: "Reset" }
   ]
 }
 let ALLCOUNTRIES = []
+const YEARS = [1970, 1980, 1990, 2000, 2010, 2015, 2020, 2022]
 const MAXPOP =  1500000000
 const LineAnimationDelay = 500
 const TimeStart = 1970
@@ -50,6 +51,7 @@ const LineWidthScale = d3
 let LineHeightScale = {}
 
 const LineColors = d3.schemeSet1
+const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 let i = 0
 
 // Ejes
@@ -143,7 +145,7 @@ function makeLineGraph(data) {
 
       g.append("path")
       .attr("class", "country-line")
-      .attr("stroke", d => d.color)
+      .attr("stroke", d => d.Country === "Reset" ? "white" : colorScale(d.Country))
       .attr("d", d => zeroLine(d.popdata))
       .transition()
       .duration(LineAnimationDelay)
@@ -154,7 +156,7 @@ function makeLineGraph(data) {
         .join("circle")
         .attr("class", "line-marker")
         .attr("r", 0)
-        .attr("fill", d => d.color)
+        .attr("fill", d => d.Country === "Reset" ? "white" : colorScale(d.Country))
         .attr("cy", d => LineHeightScale(d.population))
         .attr("cx", d => LineWidthScale(d.date))
         .transition()
@@ -175,7 +177,7 @@ function makeLineGraph(data) {
         .attr("r", 0)
         .transition()
         .duration(1)
-        .attr("fill", d => d.color)
+        .attr("fill", d => d.Country === "Reset" ? "white" : colorScale(d.Country))
         .attr("cy", d => LineHeightScale(d.population))
         .attr("cx", d => LineWidthScale(d.date))
         .transition()
@@ -190,7 +192,7 @@ function makeLineGraph(data) {
         .transition()
         .duration(500)
         .attr("d", d => line(d.popdata))
-        .attr("stroke", d => d.color)
+        .attr("stroke", d => d.Country === "Reset" ? "white" : colorScale(d.Country))
       )
     }
   )
@@ -209,7 +211,7 @@ function makeLineGraph(data) {
           .attr("r", 10)
           .attr("cx", LINEWIDTH - 150)
           .attr("cy", (d, i) => 130 + 30 * i)
-          .attr("fill", d => d.color)
+          .attr("fill", d => d.Country === "Reset" ? "white" : colorScale(d.Country))
           .on("click", removeCountry)
           .on("mouseover", showCross)
           .on("mouseout", hideCrosses)
@@ -238,7 +240,7 @@ function makeLineGraph(data) {
       },
       update => {
         update.call(g => g.select("circle.country-legend-color")
-          .attr("fill", d => d.color)
+          .attr("fill", d => d.Country === "Reset" ? "white" : colorScale(d.Country))
           .attr("id", d => `Circle-${d.Rank}`)
           .on("click", removeCountry)
           .on("mouseover", showCross)
@@ -276,6 +278,11 @@ function removeCountry(d, i) {
     }
     makeYaxis(getMaxPop(selectedCountries))
     makeLineGraph(selectedCountries)
+    d3.csv("data/population.csv", parseFunction).then((populationdata) => {
+      let chosen_countries = populationdata.filter(c => selectedCountries.find(c2 => c.ID == c2.ID));
+      chosen_countries = chosen_countries.sort((a, b) => b.Population[year] - a.Population[year]);
+      mostrargrafico(chosen_countries, year)
+    })
   }
 }
 
@@ -284,13 +291,15 @@ function getMaxPop(countries) {
   return max_pop = max_pop_country.popdata[7].population
 }
 
-function sortByPop(countries) {
-  return countries.sort((a, b) => b.popdata[7].population - a.popdata[7].population)
+function sortByPop(countries, year=2022) {
+  let year_index = YEARS.indexOf(year)
+  return countries.sort((a, b) => b.popdata[year_index].population - a.popdata[year_index].population)
 }
 
 function resetCountries() {
   d3.csv("data/population.csv", parseRowCSV).then((populationdata) => {
     i = 0
+    populationdata = sortByPop(populationdata, 1970)
     ALLCOUNTRIES = populationdata
     selectedCountries = populationdata.slice(0, 8)
     console.log("Loaded 8 most populous countries for line graph")
@@ -300,17 +309,28 @@ function resetCountries() {
     makeYaxis(max_pop)
     makeLineGraph(selectedCountries)
   })
+
+  d3.csv("data/population.csv", parseFunction).then((populationdata) => {
+    populationdata = populationdata.sort((a, b) => b.Population[year] - a.Population[year]).slice(0, 8);
+    mostrargrafico(populationdata, year)
+  })
 }
 
 function addCountry(d, i) {
   let countrytoadd = ALLCOUNTRIES.find(c => c.ID == i.ID)
-  let alreadySelected = selectedCountries.find(c => c.ID == countrytoadd.ID) != undefined
+  let alreadySelected = selectedCountries.find(c => c.ID == countrytoadd.ID)
   if (!alreadySelected && selectedCountries.length < 12) {
     selectedCountries.push(countrytoadd)
-    selectedCountries = sortByPop(selectedCountries.slice(1))
+    selectedCountries = sortByPop(selectedCountries.slice(1), year)
     selectedCountries.unshift(emptyCountry)
     makeYaxis(getMaxPop(selectedCountries))
     makeLineGraph(selectedCountries)
+
+    d3.csv("data/population.csv", parseFunction).then((populationdata) => {
+      let chosen_countries = populationdata.filter(c => selectedCountries.find(c2 => c.ID == c2.ID));
+      chosen_countries = chosen_countries.sort((a, b) => b.Population[year] - a.Population[year]);
+      mostrargrafico(chosen_countries, year)
+    })
   }
 }
 
@@ -340,14 +360,14 @@ function parseRowCSV(d) {
     CCA3: d.CCA3,
     Country: d.Country,
     popdata: [
-      {date:1970, population: +d['1970'], color: LineColors[i]},
-      {date:1980, population: +d['1980'], color: LineColors[i]},
-      {date:1990, population: +d['1990'], color: LineColors[i]},
-      {date:2000, population: +d['2000'], color: LineColors[i]},
-      {date:2010, population: +d['2010'], color: LineColors[i]},
-      {date:2015, population: +d['2015'], color: LineColors[i]},
-      {date:2020, population: +d['2020'], color: LineColors[i]},
-      {date:2022, population: +d['2022'], color: LineColors[i]},
+      {date:1970, population: +d['1970'], color: LineColors[i], Country: d.Country},
+      {date:1980, population: +d['1980'], color: LineColors[i], Country: d.Country},
+      {date:1990, population: +d['1990'], color: LineColors[i], Country: d.Country},
+      {date:2000, population: +d['2000'], color: LineColors[i], Country: d.Country},
+      {date:2010, population: +d['2010'], color: LineColors[i], Country: d.Country},
+      {date:2015, population: +d['2015'], color: LineColors[i], Country: d.Country},
+      {date:2020, population: +d['2020'], color: LineColors[i], Country: d.Country},
+      {date:2022, population: +d['2022'], color: LineColors[i], Country: d.Country},
     ],
     color: LineColors[i]
   }

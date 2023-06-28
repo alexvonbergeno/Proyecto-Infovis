@@ -56,10 +56,10 @@ function mostrargrafico(populationdata, year) {
 
 
     // Cambiar el texto del elemento seleccionado
-    title_text.innerText = "Top 5 ciudades más pobladas en " +  year.toString();
+    title_text.innerText = `Top ${populationdata.length} ciudades más pobladas en ${year}`;
 
     // Ordena los datos en orden descendente y toma los primeros 5
-    let top5 = populationdata.sort((a, b) => b.Population[year] - a.Population[year]).slice(0, 5);
+    let top5 = populationdata.sort((a, b) => b.Population[year] - a.Population[year])//.slice(0, 5);
 
     // Escala para el eje X
     let xScale = d3.scaleLinear()
@@ -71,7 +71,7 @@ function mostrargrafico(populationdata, year) {
         .range([0, 500])
 
     // Crea una escala de color
-    let colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    //let colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     // Entregamos datos a los ejes
     xaxis.call(d3.axisBottom(xScale).tickFormat(t => `${t / 1000000} M`));
@@ -104,9 +104,7 @@ function mostrargrafico(populationdata, year) {
                             .attr('stroke-width', 1)
                             .attr('stroke', 'black')
                     })
-                    .on('click', function (event, d) {
-                        mostrarinfopais(populationdata, d.ID)
-                    })
+                    .on('click', addCountry)
                 
                     rect.append('title')
                       .text(d => `Poblacón: ${Math.floor(d.Population[year] / 1000000)} M`)
@@ -125,9 +123,7 @@ function mostrargrafico(populationdata, year) {
                     .text(d => `Población: ${Math.floor(d.Population[year] / 1000000)} M`)
                     .end()
                     .then(() => {
-                      update.on('click', function (event, d) {
-                        mostrarinfopais(populationdata, d.ID)
-                      })
+                      update.on('click', addCountry)
                     });
                     
             },
@@ -178,5 +174,6 @@ function parseFunction(d) {
   }
 
 d3.csv("data/population.csv", parseFunction).then((populationdata) => {
+    populationdata = populationdata.sort((a, b) => b.Population[year] - a.Population[year]).slice(0, 8);
     mostrargrafico(populationdata, year)
   })

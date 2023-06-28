@@ -278,7 +278,11 @@ const intervalId = setInterval(actualizar, 1000);
 function setYear(ano) {
   year = ano
   generarcirculocalor(populationdat, projection, ano, escalacirculos, escalacolor);
-  mostrargrafico(populationdat, ano);
+  d3.csv("data/population.csv", parseFunction).then((populationdata) => {
+    let chosen_countries = populationdata.filter(c => selectedCountries.find(c2 => c.ID == c2.ID));
+    chosen_countries = chosen_countries.sort((a, b) => b.Population[year] - a.Population[year]);
+    mostrargrafico(chosen_countries, year)
+  })
   
 }
 
